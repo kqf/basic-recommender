@@ -38,7 +38,15 @@ def develop(name, dataset):
     print(message.format(name, "valid", np.mean(scores_te), np.std(scores_te)))
 
 
-def train(name="popularity"):
-    train = read_dataset("data/train.csv")
+@click.command()
+@click.option("--name", type=str, default="")
+@click.option("--submission", type=cpth(exists=False))
+@click.option("--train", type=cpth(exists=True), default="data/train.csv")
+@click.option("--test", type=cpth(exists=True), default="data/test.csv")
+def train(name, train, test):
+    train = read_dataset(train)
     model = build_model()
     model.fit(train)
+
+    test = read_dataset(test)
+    model.predict(test)
