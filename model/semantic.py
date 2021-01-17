@@ -70,8 +70,7 @@ def scoring(model, X, y, k):
     return recall(y[:, None], probas, k=k, padding_label=-1).mean()
 
 
-def build_model(X_val=None, max_epochs=8, k=5):
-    preprocessor = build_preprocessor(min_freq=1)
+def build_model(max_epochs=8, k=5):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     model = SemanticNet(
@@ -88,7 +87,7 @@ def build_model(X_val=None, max_epochs=8, k=5):
         iterator_valid=SequenceIterator,
         iterator_valid__shuffle=False,
         iterator_valid__sort=False,
-        train_split=partial(train_split, prep=preprocessor, X_val=X_val),
+        train_split=train_split,
         device=device,
         predict_nonlinearity=partial(inference, k=k, device=device),
         callbacks=[
@@ -104,7 +103,7 @@ def build_model(X_val=None, max_epochs=8, k=5):
     )
 
     full = make_pipeline(
-        preprocessor,
+        build_preprocessor(min_freq=1),
         model,
     )
     return SemiSupervisedRecommender(full)
