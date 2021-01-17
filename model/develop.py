@@ -1,10 +1,11 @@
 import numpy as np
 from sklearn.model_selection import KFold
 
-from model.data import read_dataset, to_inference, pad
-from model.pop import PopRecommender
-from model.coo import CooRecommender
-from model.logistic import build_model
+from model.data import read_dataset
+# from model.pop import PopRecommender
+# from model.coo import CooRecommender
+# from model.logistic import build_model
+from model.semantic import build_model
 from model.metrics import recall_score
 
 
@@ -25,9 +26,6 @@ def main(name="popularity"):
 
         # The same for test set
         scores_te.append(recall_score(model, test))
-        print(scores_tr)
-        print(scores_te)
-        return
 
     message = "Recall@5 for {} model at {} set: {:.4g} +/- {:.4g}"
     print(message.format(name, "train", np.mean(scores_tr), np.std(scores_tr)))
