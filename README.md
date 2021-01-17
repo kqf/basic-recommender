@@ -1,4 +1,7 @@
-# Basic Recommender [![Build Status](https://travis-ci.com/kqf/basic-recommender.svg?branch=master)](https://travis-ci.com/kqf/basic-recommender)
+# Basic Recommender ![tests](https://github.com/kqf/basic-recommender/workflows/tests/badge.svg)
+
+
+This is a toy example of a recommender that produces some suggestions given a set of entities. All the models here are collaborative. They make predictions based on observed co-occurrences.
 
 ## Install
 ```bash
