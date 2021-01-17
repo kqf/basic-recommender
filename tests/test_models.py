@@ -2,8 +2,7 @@ import pytest
 
 from model.pop import PopRecommender
 from model.coo import CooRecommender
-# from model.logistic import build_model
-from model.semantic import build_model
+from model.logistic import build_model
 from model.data import to_inference, pad
 from model.metrics import recall
 
