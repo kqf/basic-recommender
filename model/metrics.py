@@ -1,4 +1,3 @@
-import pandas as pd
 import numpy as np
 from model.data import to_inference, pad
 
@@ -14,8 +13,4 @@ def recall_score(model, data):
     # Approximate the recall on the data set
     observed, gold = to_inference(data)
     preds = model.predict(observed)
-
-    metrics = pd.DataFrame({"preds": preds.tolist(), "gold": gold})
-    metrics["output"] = recall(pad(gold), preds)
-    print(metrics)
     return recall(pad(gold), preds).mean()

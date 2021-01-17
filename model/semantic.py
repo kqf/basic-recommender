@@ -36,13 +36,7 @@ class DynamicParametersSetter(skorch.callbacks.Callback):
         return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
-class DynamicBatches(skorch.callbacks.Callback):
-    def on_epoch_begin(self, model, *args, **kwargs):
-        new_batch_size = min(model.batch_size * 2, 2048)
-        model.set_params(batch_size=new_batch_size)
-
-
-class SeqNet(skorch.NeuralNet):
+class SemanticNet(skorch.NeuralNet):
     def predict(self, X):
         # Now predict_proba returns top k indexes
         indexes = self.predict_proba(X)
@@ -51,12 +45,6 @@ class SeqNet(skorch.NeuralNet):
     def fit(self, X, y):
         # Ignore y, as preprocessing step has already taken it into account
         return super().fit(X, y=None)
-
-    def get_loss(self, *args, **kwargs):
-        # print("true", args[1])
-        # print("pred", args[0].argmax(-1))
-
-        return super().get_loss(*args, **kwargs)
 
 
 class SemanticModel(torch.nn.Module):
@@ -70,36 +58,27 @@ class SemanticModel(torch.nn.Module):
         # x[batch_size, seq_len] -> embs[batch_size, seq_len, hidden_size]
         embs = self._emb(x)
 
-        # attention(x)[batch_size, seq_len, hidden_size]
-        #   -> context[batch_size, hidden_size]
+        # context[batch_size, hidden_size]
         context = embs.mean(dim=1)
 
         # context[batch_size, hidden_size]  -> logits [batch_size, vocab_size]
-        return self._out(context)  # @ self._emb.weight.T
+        return self._out(context)
 
 
 def scoring(model, X, y, k):
     probas = model.predict_proba(X)
-    # print("score true", y)
-    # print("score pred", probas[:, 0])
-
-    score = recall(y[:, None], probas, k=k, padding_label=-1).mean()
-
-    # if (y == probas[:, 0]).all():
-    #     import ipdb; ipdb.set_trace(); import IPython; IPython.embed() # noqa
-
-    return score
+    return recall(y[:, None], probas, k=k, padding_label=-1).mean()
 
 
 def build_model(X_val=None, max_epochs=8, k=5):
     preprocessor = build_preprocessor(min_freq=1)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    model = SeqNet(
+    model = SemanticNet(
         module=SemanticModel,
         module__vocab_size=3,  # DynamicParametersSetter sets the right value
+        module__hidden_size=100,
         optimizer=torch.optim.Adam,
-        # optimizer__lr=0.001,
         criterion=torch.nn.CrossEntropyLoss,
         max_epochs=max_epochs,
         batch_size=1024,
@@ -110,12 +89,10 @@ def build_model(X_val=None, max_epochs=8, k=5):
         iterator_valid__shuffle=False,
         iterator_valid__sort=False,
         train_split=partial(train_split, prep=preprocessor, X_val=X_val),
-        # train_split=None,
         device=device,
         predict_nonlinearity=partial(inference, k=k, device=device),
         callbacks=[
             DynamicParametersSetter(),
-            # DynamicBatches(),
             skorch.callbacks.BatchScoring(
                 partial(scoring, k=k),
                 name="recall@5",
@@ -123,7 +100,6 @@ def build_model(X_val=None, max_epochs=8, k=5):
                 lower_is_better=False,
             ),
             skorch.callbacks.ProgressBar(),
-            # skorch.callbacks.Initializer("*", fn=init),
         ]
     )
 
@@ -136,5 +112,4 @@ def build_model(X_val=None, max_epochs=8, k=5):
 
 def inference(logits, k, device):
     probas = torch.softmax(logits.to(device), dim=-1)
-    # Return only indices
     return torch.topk(probas, k=k, dim=-1)[-1].clone().detach()
