@@ -1,5 +1,11 @@
+model = semantic
 
-all: data/*.csv
-	python model/develop.py
+develop: data/*.csv
+	@which develop-basic-recommender > /dev/null || pip install -e .
+	develop-basic-recommender --name $(model)
+
+submit*: data/*.csv
+	@which train-basic-recommender > /dev/null || pip install -e .
+	train-basic-recommender --name $(model)
 
 .PHONY: all
