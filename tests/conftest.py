@@ -24,7 +24,7 @@ def _fake_data(n_users, n_items):
 
 
 @pytest.fixture
-def fake_data_path(n_users=10_000, n_items=5000):
+def fake_data_path(n_users=10_000, n_items=1000):
     with tempfile.NamedTemporaryFile() as filename:
         df = _fake_data(n_users, n_items)
         df.to_csv(filename.name, index=False)
