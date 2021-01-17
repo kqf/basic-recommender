@@ -3,7 +3,7 @@ target = $(model)-submission.csv
 
 $(target): data/*.csv
 	@which train-basic-recommender > /dev/null || pip install -e .
-	train-basic-recommender --name $(model) --submission $(target)
+	train-basic-recommender --name $(model) --output $@
 
 
 develop: data/*.csv

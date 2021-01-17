@@ -1,5 +1,6 @@
 import click
 import numpy as np
+import pandas as pd
 
 from click import Path as cpth
 from sklearn.model_selection import KFold
@@ -52,13 +53,18 @@ def develop(name, dataset):
 
 @click.command()
 @click.option("--name", type=str, default="")
-@click.option("--submission", type=cpth(exists=False))
+@click.option("--output", type=cpth(exists=False))
 @click.option("--train", type=cpth(exists=True), default="data/train.csv")
 @click.option("--test", type=cpth(exists=True), default="data/test.csv")
-def train(name, train, test, submission):
-    train = read_dataset(train)
-    model = build_model(name)
-    model.fit(train)
+def train(name, train, test, output):
+    training = read_dataset(train)
 
-    test = read_dataset(test)
-    model.predict(test)
+    model = build_model(name)
+    model.fit(training)
+
+    holdout = read_dataset(test)
+    predicted = model.predict(holdout)
+
+    submission = pd.read_csv(test)
+    submission["icd"] = [",".join(case) for case in predicted]
+    submission.to_csv(output, index=False)
