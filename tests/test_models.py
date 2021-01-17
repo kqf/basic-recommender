@@ -9,8 +9,8 @@ from model.metrics import recall
 
 
 @pytest.mark.parametrize("build", [
-    # PopRecommender,
-    # CooRecommender,
+    PopRecommender,
+    CooRecommender,
     build_model,
 ])
 def test_models(build, data):
