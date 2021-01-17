@@ -1,7 +1,6 @@
 
 from model.data import read_dataset
 from model.semantic import build_model
-from model.metrics import recall_score
 
 
 def main(name="popularity"):
