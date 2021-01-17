@@ -11,11 +11,22 @@ pip install -r requirements.txt
 pip install .
 ```
 
-## Run the experiments 
+## Run
+
 To run the experiments do
 ```bash
 
 # Download the dataset *.csv into ./data folder 
-# and then run
-make 
+# the default model is "semantic", it also supports "pop" and "coo" models
+make develop model=pop
+```
+To train the model on the full dataset:
+```bash
+
+make model=pop
+```
+
+Prepare the final submission
+```bash
+make target=submission.csv
 ```
