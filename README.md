@@ -1,4 +1,7 @@
-# Basic Recommender [![Build Status](https://travis-ci.com/kqf/basic-recommender.svg?branch=master)](https://travis-ci.com/kqf/basic-recommender)
+# Basic Recommender ![tests](https://github.com/kqf/basic-recommender/workflows/tests/badge.svg)
+
+
+This is a toy example of a recommender that produces some suggestions given a set of entities. All the models here are collaborative. They make predictions based on observed co-occurrences.
 
 ## Install
 ```bash
@@ -8,11 +11,22 @@ pip install -r requirements.txt
 pip install .
 ```
 
-## Run the experiments 
+## Run
+
 To run the experiments do
 ```bash
 
 # Download the dataset *.csv into ./data folder 
-# and then run
-make 
+# the default model is "semantic", it also supports "pop" and "coo" models
+make develop model=pop
+```
+To train the model on the full dataset:
+```bash
+
+make model=pop
+```
+
+Prepare the final submission
+```bash
+make target=submission.csv
 ```
