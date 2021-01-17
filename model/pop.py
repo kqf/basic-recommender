@@ -3,7 +3,7 @@ from collections import Counter
 
 
 class PopRecommender:
-    def __init__(self, k=5):
+    def __init__(self, k):
         self.k = k
         self.candidates_ = None
         self.counts_ = None
@@ -19,3 +19,8 @@ class PopRecommender:
 
         # Repeat the same answer alog 0th axis -> [len(X), self.k]
         return np.repeat(candiates, X.shape[0], axis=0)
+
+
+# Make sure our API is consistent with other modules
+def build_model(k=5):
+    return PopRecommender(k=k)

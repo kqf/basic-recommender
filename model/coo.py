@@ -31,3 +31,8 @@ class CooRecommender:
 
         preds = (-scores).argpartition(self.k, -1)[..., :self.k]
         return np.take(self._itos, preds)
+
+
+# Make sure our API is consistent with other modules
+def build_model(k=5):
+    return CooRecommender(k=k)

@@ -4,12 +4,24 @@ import numpy as np
 from click import Path as cpth
 from sklearn.model_selection import KFold
 
+from model.pop import build_model as build_pop
+from model.coo import build_model as build_coo
+# from model.logistic import build_model as build_logistic
+from model.semantic import build_model as build_semantic
+
 from model.data import read_dataset
-# from model.pop import PopRecommender
-# from model.coo import CooRecommender
-# from model.logistic import build_model
-from model.semantic import build_model
 from model.metrics import recall_score
+
+
+def build_model(name):
+    models = {
+        "pop": build_pop,
+        "coo": build_coo,
+        # "logistic": build_logistic, not finished
+        "semantic": build_semantic,
+    }
+    model = models.get(name)
+    return model()
 
 
 @click.command()
@@ -24,7 +36,7 @@ def develop(name, dataset):
         train, test = data.iloc[idx_tr], data.iloc[idx_te]
 
         # Fit the model
-        model = build_model()
+        model = build_model(name)
         model.fit(train)
 
         # Approximate the recall on the train set
@@ -43,9 +55,9 @@ def develop(name, dataset):
 @click.option("--submission", type=cpth(exists=False))
 @click.option("--train", type=cpth(exists=True), default="data/train.csv")
 @click.option("--test", type=cpth(exists=True), default="data/test.csv")
-def train(name, train, test):
+def train(name, train, test, submission):
     train = read_dataset(train)
-    model = build_model()
+    model = build_model(name)
     model.fit(train)
 
     test = read_dataset(test)
