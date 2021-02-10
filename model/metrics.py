@@ -1,5 +1,5 @@
 from model.data import to_inference, pad
-from irmetrics import recall as irecall
+from irmetrics.topk import recall as irecall
 
 
 def recall(y_true, y_pred=None, k=None, padding_label="<pad>"):
