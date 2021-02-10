@@ -2,8 +2,8 @@ from model.data import to_inference, pad
 from irmetrics.topk import recall as irecall
 
 
-def recall(y_true, y_pred=None, k=None, padding_label="<pad>"):
-    return irecall(y_true, y_pred, k=k, padding_token=padding_label)
+def recall(y_true, y_pred=None, k=None, pad_token="<pad>"):
+    return irecall(y_true, y_pred, k=k, pad_token=pad_token)
 
 
 def recall_score(model, data):

@@ -21,5 +21,5 @@ def preds(gold, positive_answers):
 ])
 def test_recall(positive_answers, preds, gold):
     desired = positive_answers / gold.shape[-1]
-    mean_recall = recall(gold, preds, k=5, padding_label=-1).mean()
+    mean_recall = recall(gold, preds, k=5, pad_token=-1).mean()
     np.testing.assert_almost_equal(mean_recall, desired)

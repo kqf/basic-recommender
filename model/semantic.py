@@ -67,7 +67,7 @@ class SemanticModel(torch.nn.Module):
 
 def scoring(model, X, y, k):
     probas = model.predict_proba(X)
-    return recall(y[:, None], probas, k=k, padding_label=-1).mean()
+    return recall(y[:, None], probas, k=k, pad_token=-1).mean()
 
 
 def build_model(max_epochs=8, k=5):

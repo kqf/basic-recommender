@@ -23,5 +23,5 @@ def to_inference(dataset):
     return splitted.str[0], splitted.str[1]
 
 
-def pad(seq, k=5, padding_label="<pad>"):
-    return np.stack([(s + [padding_label] * k)[:k] for s in seq])
+def pad(seq, k=5, pad_token="<pad>"):
+    return np.stack([(s + [pad_token] * k)[:k] for s in seq])
