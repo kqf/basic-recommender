@@ -1,12 +1,9 @@
-import numpy as np
 from model.data import to_inference, pad
+from irmetrics import recall as irecall
 
 
 def recall(y_true, y_pred=None, k=None, padding_label="<pad>"):
-    y_true, y_pred = np.atleast_2d(y_true, y_pred)
-    tp = (y_pred[:, :, None] == y_true[:, None]).any(axis=-1)
-    true = y_true != padding_label
-    return tp.sum(-1) / true.sum(-1)
+    return irecall(y_true, y_pred, k=k, padding_token=padding_label)
 
 
 def recall_score(model, data):
