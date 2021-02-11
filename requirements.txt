@@ -5,4 +5,4 @@ torch
 torchtext
 skorch
 click
-ir-metrics
+ir-metrics>=0.1.6
